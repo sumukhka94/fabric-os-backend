@@ -6,6 +6,8 @@ import com.sumukh.fabricos.Repositories.CustomerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/customers")
@@ -27,5 +29,18 @@ public class CustomerController {
         entity.setAddress(customer.getAddress());
         Customer saved = customerRepository.save(entity);
         return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("get-all")
+    public  ResponseEntity<List<Customer>> getAllCustomers(){
+        List<Customer> customers = customerRepository.findAll();
+        return ResponseEntity.ok(customers);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<Customer> deleteCustomer(@PathVariable("id") long id){
+        Customer deltedCustomer = customerRepository.findById(id).orElse(null);
+                customerRepository.deleteById(id);
+        return ResponseEntity.ok(deltedCustomer);
     }
 }
