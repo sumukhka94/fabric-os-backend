@@ -5,6 +5,7 @@ import com.sumukh.fabricos.Dtos.TemplateSubjectDto;
 import com.sumukh.fabricos.Entities.Template;
 import com.sumukh.fabricos.Repositories.TemplateRepository;
 import com.sumukh.fabricos.enums.Channel;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,5 +96,13 @@ public class TemplateController {
         TemplateListDto response = new TemplateListDto(String.valueOf(saved.getId()),saved.getTemplateName(),saved.getChannel());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/get-preview")
+    public ResponseEntity<Map<String,String>> getPreview(@RequestBody Map<String,String> request){
+        String subject = request.get("subject");
+        String replaced = subject.replaceAll("\\{\\{name}}", "Sumukh");
+
+        return ResponseEntity.ok(Map.of("subject" , replaced));
     }
 }
