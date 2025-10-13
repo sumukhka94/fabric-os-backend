@@ -4,6 +4,7 @@ import com.sumukh.fabricos.Dtos.TemplateListDto;
 import com.sumukh.fabricos.Dtos.TemplateSubjectDto;
 import com.sumukh.fabricos.Entities.Template;
 import com.sumukh.fabricos.Repositories.TemplateRepository;
+import com.sumukh.fabricos.enums.Channel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,6 @@ public class TemplateController {
         List<TemplateListDto> templateListDto = allTemplates.stream()
                 .map(template -> new TemplateListDto(String.valueOf(template.getId()), template.getTemplateName() , template.getChannel() ))
                 .toList();
-
-        System.out.println(templateListDto);
 
         return ResponseEntity.ok(templateListDto);
     }
@@ -80,5 +79,21 @@ public class TemplateController {
         res.setSubject(edited.getSubject());
 
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<TemplateListDto> addTemplate(@RequestBody Map<String,String> request){
+        Template t = new Template();
+        t.setSubject(request.get("subject"));
+        t.setTemplateName(request.get("templateName"));
+        String channelStr = request.get("selectedChannel");
+        Channel channel = channelStr.equals("Email") ? Channel.EMAIL : Channel.SMS;
+        t.setChannel(channel);
+
+        Template saved = templateRepository.save(t);
+
+        TemplateListDto response = new TemplateListDto(String.valueOf(saved.getId()),saved.getTemplateName(),saved.getChannel());
+
+        return ResponseEntity.ok(response);
     }
 }
