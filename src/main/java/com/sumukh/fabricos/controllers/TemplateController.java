@@ -5,6 +5,7 @@ import com.sumukh.fabricos.Dtos.TemplateSubjectDto;
 import com.sumukh.fabricos.Entities.Template;
 import com.sumukh.fabricos.Repositories.TemplateRepository;
 import com.sumukh.fabricos.enums.Channel;
+import com.sumukh.fabricos.utils.TemplateUtils;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +89,7 @@ public class TemplateController {
         t.setSubject(request.get("subject"));
         t.setTemplateName(request.get("templateName"));
         String channelStr = request.get("selectedChannel");
-        Channel channel = channelStr.equals("Email") ? Channel.EMAIL : Channel.SMS;
+        Channel channel = channelStr.equals("EMAIL") ? Channel.EMAIL : Channel.SMS;
         t.setChannel(channel);
 
         Template saved = templateRepository.save(t);
@@ -101,7 +102,7 @@ public class TemplateController {
     @PostMapping("/get-preview")
     public ResponseEntity<Map<String,String>> getPreview(@RequestBody Map<String,String> request){
         String subject = request.get("subject");
-        String replaced = subject.replaceAll("\\{\\{name}}", "Sumukh");
+        String replaced = TemplateUtils.replaceNamePlaceholder(subject, "Sumukh");
 
         return ResponseEntity.ok(Map.of("subject" , replaced));
     }
