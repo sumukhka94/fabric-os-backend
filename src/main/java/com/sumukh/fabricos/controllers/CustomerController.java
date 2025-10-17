@@ -6,6 +6,7 @@ import com.sumukh.fabricos.Repositories.CustomerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -27,6 +28,7 @@ public class CustomerController {
         entity.setEmail(customer.getEmail());
         entity.setPhone(customer.getPhone());
         entity.setAddress(customer.getAddress());
+        entity.setBirth(LocalDate.parse(customer.getBirth()));
         Customer saved = customerRepository.save(entity);
         return ResponseEntity.ok(saved);
     }
