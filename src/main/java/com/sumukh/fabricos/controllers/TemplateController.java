@@ -5,11 +5,14 @@ import com.sumukh.fabricos.Dtos.TemplateSubjectDto;
 import com.sumukh.fabricos.Entities.Template;
 import com.sumukh.fabricos.Repositories.TemplateRepository;
 import com.sumukh.fabricos.enums.Channel;
+import com.sumukh.fabricos.services.AiService;
 import com.sumukh.fabricos.utils.TemplateUtils;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +22,11 @@ import java.util.Map;
 public class TemplateController {
 
     private final TemplateRepository templateRepository;
+    private final AiService aiService;
 
-    public TemplateController(TemplateRepository templateRepository) {
+    public TemplateController(TemplateRepository templateRepository, AiService aiService) {
         this.templateRepository = templateRepository;
+        this.aiService = aiService;
     }
 
     @GetMapping("/get-all")
@@ -105,5 +110,13 @@ public class TemplateController {
         String replaced = TemplateUtils.replaceNamePlaceholder(subject, "Sumukh");
 
         return ResponseEntity.ok(Map.of("subject" , replaced));
+    }
+
+    @PostMapping("/enhance")
+    public ResponseEntity<Map<String,String>> enhanceTemplate(@RequestBody Map<String,String> request){
+        String subject = request.get("subject");
+        String enhancedSubject = aiService.correctText(subject);
+        Map<String,String> response = Map.of("subject", enhancedSubject);
+        return ResponseEntity.ok(response);
     }
 }
